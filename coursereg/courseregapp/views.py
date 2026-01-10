@@ -28,6 +28,26 @@ def courses(request):
     return render(request, 'allcourses.html', {"courses": courses})
 
 
+def update_course(request, id):
+
+    course = Course.objects.get(pk=id)
+
+
+    if request.method == "POST":
+
+        course.name = request.POST['name']
+        course.description = request.POST['desc']
+        course.price = request.POST['price']
+        course.duration = request.POST['duration']
+
+        course.save()
+
+        return redirect("courses")
+
+    else:
+        return render(request, "editcourse.html", context={"course": course})
+
+
 def students(request):
 
     students = Student.objects.all()
@@ -82,6 +102,39 @@ def student(request):
         courses = Course.objects.all()
 
         return render(request, 'studentreg.html', {"courses": courses})
+
+
+def update_student(request, id):
+
+    courses = Course.objects.all()
+    student = Student.objects.get(pk=id)
+
+    if request.method == "POST":
+
+        student.firstName = request.POST['fname']
+        student.lastName = request.POST['lname']
+        student.gender = request.POST['gender']
+        student.age = request.POST['age']
+        student.email = request.POST['email']
+        student.phoneNumber = request.POST['phone']
+        student.nextOfKinName = request.POST['nokname']
+        student.nextOfKinRelationship = request.POST['nokrelation']
+        student.nextOfKinNumber = request.POST['noknumber']
+        course = request.POST['course']
+        student.batch = request.POST['batch']
+        student.classStatus = request.POST['status']
+        student.programType = request.POST['program']
+
+        course = get_object_or_404(Course, name=course)
+        student.courseId = course
+        student.courseFee = course.price
+
+        student.save()
+
+        return redirect("students")
+
+    else:
+        return render(request, "editstudent.html", context={"student": student, "courses": courses})
 
 
 def payment(request):
